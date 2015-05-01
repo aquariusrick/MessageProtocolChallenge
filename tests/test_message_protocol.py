@@ -20,3 +20,8 @@ class TestMessageProtocolChallenge(unittest.TestCase):
         self.assertEqual(check_message('Zu'), "INVALID")
         self.assertEqual(check_message('u'), "INVALID")
         self.assertEqual(check_message('ZZa'), "VALID")
+
+        self.assertEqual(check_message('3aaa'), "VALID")
+        self.assertEqual(check_message('2aaa'), "INVALID")
+        self.assertEqual(check_message('2ZaMbb'), "VALID")
+        self.assertEqual(check_message('K2aaa'), "VALID")

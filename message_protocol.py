@@ -34,6 +34,15 @@ def check_message(msg):
                 pointer = validate_messages(pointer=pointer, num_messages_expected=2)
                 continue
 
+            elif current_char.isdigit():      # This is a n-tuple
+                expected = ""
+                while current_char.isdigit():
+                    expected += current_char
+                    pointer += 1
+                    current_char = msg[pointer]
+                pointer = validate_messages(pointer=pointer, num_messages_expected=int(expected))
+                continue
+
             raise InvalidMessageException()
 
         return pointer
