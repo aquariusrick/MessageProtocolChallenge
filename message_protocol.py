@@ -1,3 +1,5 @@
+import logging
+
 possible_messages = 'abcdefghij'  # These are valid messages, they can optionally be prefixed with 'Z'
 tuple_prefix = 'MKPQ'  # A message prefixed with this should contain two messages
 
@@ -18,7 +20,7 @@ def check_message(msg):
     def validate_messages(pointer=0, num_messages_expected=1):
         for _ in range(num_messages_expected):
             if pointer == len(msg):             # No more messages left, but we expected one
-                raise InvalidMessageException()
+                raise InvalidMessageException("End of message reached, expected additional messages not found!")
 
             current_char = msg[pointer]
             while current_char == 'Z':             # Skip the Z's; they're basically pointless
@@ -43,13 +45,20 @@ def check_message(msg):
                 pointer = validate_messages(pointer=pointer, num_messages_expected=int(expected))
                 continue
 
-            raise InvalidMessageException()
+            raise InvalidMessageException("Invalid message data found at position : %s, data: [%s]"
+                                          % (pointer, msg[pointer]))
 
         return pointer
 
     try:
         pointer = validate_messages(pointer=0, num_messages_expected=1)
-        return "VALID" if pointer == len(msg) else "INVALID"
-    except InvalidMessageException:
+        if pointer == len(msg):
+            return "VALID"
+        else:
+            logging.error("Invalid Message: [%s] Unexpected (extra) data found after the message at position : %s, data: [%s]"
+                          % (msg, pointer, msg[pointer:]))
+            return "INVALID"
+    except InvalidMessageException as ex:
+        logging.error("Invalid Message: [%s] %s" % (msg, ex.message))
         return "INVALID"
 
